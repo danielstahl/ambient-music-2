@@ -1,2 +1,2 @@
-# module-music-6
-Module Music 6
+# ambient-music-2
+Ambient Music 2

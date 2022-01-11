@@ -1,4 +1,4 @@
-name := "module-music-6"
+name := "ambient-music-2"
 
 version := "1.0-SNAPSHOT"
 
@@ -16,9 +16,9 @@ libraryDependencies += "net.soundmining" %% "soundmining-modular" % "1.0-SNAPSHO
 
 console / initialCommands := """
     |import net.soundmining._
-    |ModuleMusic6.init()
+    |AmbientMusic2.init()
 """.trim().stripMargin
 
 console / cleanupCommands += """
-    ModuleMusic6.stop()
+    AmbientMusic2.stop()
 """
