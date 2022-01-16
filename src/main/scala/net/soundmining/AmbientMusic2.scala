@@ -124,7 +124,7 @@ object AmbientMusic2 {
         val note = lowNoteChain.next
         val pan = (random.nextDouble() * 2) - 1
 
-        oneNote(lowTime, note, velocity, pan, length, attack, spectrum(lowTime))
+        oneNote(lowTime, note, velocity, pan, length, attack, spectrum(lowTime), 0)
         lowTime += time
     }
 
@@ -145,7 +145,7 @@ object AmbientMusic2 {
         val note = middleNotes.next
         val pan = (random.nextDouble() * 2) - 1
 
-        oneNote(middleTime, note, velocity, pan, length, attack, spectrum(middleTime))
+        oneNote(middleTime, note, velocity, pan, length, attack, spectrum(middleTime), startChannel = 8)
         middleTime += time
     }
 
@@ -166,7 +166,7 @@ object AmbientMusic2 {
         val note = highNotes.next
         val pan = (random.nextDouble() * 2) - 1
 
-        oneNote(highTime, note, velocity, pan, length, attack, spectrum(highTime))
+        oneNote(highTime, note, velocity, pan, length, attack, spectrum(highTime), startChannel = 16)
         highTime += time
     }
 
@@ -271,7 +271,7 @@ object AmbientMusic2 {
   var fundamental: Double = Note.noteToHertz("c2")
   var second: Double = Note.noteToHertz("g3")
 
-  def oneNote(start: Double, note: Int, velocity: Double, pan: Double, len: Double, attack: Seq[Double], spect: (Double, Double) = (fundamental, second)): Unit = {
+  def oneNote(start: Double, note: Int, velocity: Double, pan: Double, len: Double, attack: Seq[Double], spect: (Double, Double) = (fundamental, second), startChannel: Int = 0): Unit = {
     println(s"start $start note $note vel $velocity pan $pan len $len attack $attack spec $spect")
 
     val (fund, sec) = spect
@@ -286,28 +286,28 @@ object AmbientMusic2 {
       .ring(staticControl(spectrumNote * fact))
       .lowPass(staticControl(spectrum(note + 2)))
       .pan(staticControl(pan - 0.1))
-      .playWithDuration(start, len)
+      .playWithDuration(start, len, outputBus = startChannel)
 
     synthPlayer()
       .triangle(staticControl(spectrumNote), relativePercControl(0.001, velocity, attack(1), Right(Instrument.SINE)))
       .ring(staticControl(spectrumNote * fact))
       .lowPass(staticControl(spectrum(note + 3)))
       .pan(staticControl(pan + 0.1))
-      .playWithDuration(start, len)
+      .playWithDuration(start, len, outputBus = startChannel + 2)
 
     synthPlayer()
       .pulse(staticControl(spectrumNote), relativePercControl(0.001, velocity * 0.5, attack(2), Right(Instrument.SINE)))
       .ring(staticControl(spectrumNote * fact))
       .highPass(staticControl(spectrum(note + 20)))
       .pan(staticControl(pan))
-      .playWithDuration(start, len)
+      .playWithDuration(start, len, outputBus = startChannel + 4)
 
     synthPlayer()
       .whiteNoise(relativePercControl(0.001, velocity * 5, attack(3), Right(Instrument.SINE)))
       .bandPass(staticControl(spectrumNote), staticControl(0.1))
       .ring(staticControl(spectrumNote * fact))
       .pan(lineControl(pan - 0.2, pan + 0.2))
-      .playWithDuration(start, len)
+      .playWithDuration(start, len, outputBus = startChannel + 6)
   }
 
   def stop(): Unit = {
